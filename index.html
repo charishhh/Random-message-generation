@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ransom Note Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat&family=Courier+Prime&family=Creepster&family=Fjalla+One&family=Impact&family=Lobster&family=Oswald:wght@400;700&family=Passion+One&family=Permanent+Marker&family=Playfair+Display:wght@700&family=Righteous&family=Roboto+Condensed:wght@700&family=Rubik+Beastly&family=Special+Elite&family=Staatliches&family=Ultra&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div id="backgroundLetters"></div>
+    <div class="container">
+        <header>
+            <h1>Ransom Note Generator</h1>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <textarea id="textInput" placeholder="Type your message here..." rows="5"></textarea>
+            </div>
+
+            <div class="output-section">
+                <div id="ransomNote" class="ransom-note">
+                    <p class="placeholder">Your ransom note will appear here...</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="sendUrlBtn" class="btn btn-black">
+                    <span class="icon">✉</span>
+                    Send note as URL
+                </button>
+                <button id="imageBtn" class="btn btn-grey">
+                    <span class="icon">↓</span>
+                    Image
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Share Your Ransom Note</h2>
+            <div class="share-options">
+                <input type="text" id="shareUrl" readonly>
+                <button id="copyUrlBtn" class="btn">Copy URL</button>
+            </div>
+            <div class="share-image-preview" id="imagePreview"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
