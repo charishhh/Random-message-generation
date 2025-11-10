@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You've got mail</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat&family=Courier+Prime&family=Creepster&family=Fjalla+One&family=Impact&family=Lobster&family=Oswald:wght@400;700&family=Passion+One&family=Permanent+Marker&family=Playfair+Display:wght@700&family=Righteous&family=Roboto+Condensed:wght@700&family=Rubik+Beastly&family=Special+Elite&family=Staatliches&family=Ultra&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .envelope-container {
+            text-align: center;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: all 0.5s ease;
+            margin-bottom: 40px;
+        }
+
+        .envelope-container.opened {
+            margin-bottom: 20px;
+            opacity: 0.7;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .envelope {
+            width: 320px;
+            height: 220px;
+            position: relative;
+            margin: 0 auto 40px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .envelope-container:hover .envelope:not(.opened) {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .envelope-back {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e8d5a3 0%, #d4af37 100%);
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
+        .envelope-flap {
+            width: 100%;
+            height: 55%;
+            background: linear-gradient(135deg, #c9a227 0%, #b8941f 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top center;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 8px 8px 0 0;
+            z-index: 2;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%);
+        }
+
+        .envelope-container.opened .envelope-flap {
+            transform: rotateX(-160deg);
+        }
+
+        .envelope-front {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e8d5a3 0%, #d4af37 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .envelope-seal {
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #c41e3a 0%, #8b0000 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            z-index: 3;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .envelope-container.opened .envelope-seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        .envelope-container:active .envelope-seal {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        .mail-text {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c2c2c;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: 'Special Elite', 'Courier Prime', monospace;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tap-text {
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Courier Prime', monospace;
+            transition: color 0.3s ease;
+        }
+
+        .envelope-container:hover .tap-text {
+            color: #333;
+        }
+
+        .envelope-container.opened .mail-text,
+        .envelope-container.opened .tap-text {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .note-content {
+            display: none;
+            max-width: 900px;
+            margin: 60px auto 40px;
+            padding: 50px;
+            background: #fff;
+            border-radius: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 2px solid #eee;
+        }
+
+        .envelope-container.opened ~ .note-content {
+            display: block;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ransom-note {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            align-items: baseline;
+            line-height: 2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .ransom-note .letter {
+            display: inline-block;
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            padding: 2px 3px;
+        }
+
+        .ransom-note .letter.pattern-1 {
+            background-image: 
+                repeating-linear-gradient(0deg, 
+                    rgba(255,255,255,0.3) 0px, 
+                    rgba(255,255,255,0.3) 1px, 
+                    transparent 1px, 
+                    transparent 2px);
+            background-size: 100% 3px;
+        }
+
+        .ransom-note .letter.pattern-2 {
+            background-image: 
+                repeating-linear-gradient(90deg, 
+                    rgba(255,255,255,0.25) 0px, 
+                    rgba(255,255,255,0.25) 1px, 
+                    transparent 1px, 
+                    transparent 2px);
+            background-size: 3px 100%;
+        }
+
+        .ransom-note .letter.pattern-3 {
+            background-image: 
+                radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 0.5px, transparent 0.5px),
+                radial-gradient(circle at 4px 4px, rgba(0,0,0,0.1) 0.5px, transparent 0.5px);
+            background-size: 5px 5px, 8px 8px;
+            background-position: 0 0, 2px 2px;
+        }
+
+        .ransom-note .letter.pattern-4 {
+            background-image: 
+                repeating-linear-gradient(45deg, 
+                    transparent 0px, 
+                    transparent 2px, 
+                    rgba(255,255,255,0.2) 2px, 
+                    rgba(255,255,255,0.2) 3px);
+            background-size: 6px 6px;
+        }
+
+        .ransom-note .space {
+            width: 0.4em;
+            display: inline-block;
+        }
+
+        .ransom-note .newline {
+            width: 100%;
+            height: 0.8em;
+            flex-basis: 100%;
+        }
+
+        .placeholder {
+            color: #999;
+            font-style: italic;
+            font-size: 1.2rem;
+        }
+
+        /* Font classes for variety */
+        .font-anton { font-family: 'Anton', sans-serif; }
+        .font-bebas { font-family: 'Bebas Neue', cursive; }
+        .font-caveat { font-family: 'Caveat', cursive; }
+        .font-courier { font-family: 'Courier Prime', monospace; }
+        .font-creepster { font-family: 'Creepster', cursive; }
+        .font-fjalla { font-family: 'Fjalla One', sans-serif; }
+        .font-impact { font-family: 'Impact', sans-serif; }
+        .font-lobster { font-family: 'Lobster', cursive; }
+        .font-oswald { font-family: 'Oswald', sans-serif; }
+        .font-passion { font-family: 'Passion One', cursive; }
+        .font-marker { font-family: 'Permanent Marker', cursive; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-righteous { font-family: 'Righteous', cursive; }
+        .font-roboto { font-family: 'Roboto Condensed', sans-serif; }
+        .font-rubik { font-family: 'Rubik Beastly', cursive; }
+        .font-special { font-family: 'Special Elite', cursive; }
+        .font-staatliches { font-family: 'Staatliches', cursive; }
+        .font-ultra { font-family: 'Ultra', serif; }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap"></div>
+            <div class="envelope-seal">✉</div>
+        </div>
+        <div class="mail-text">You've got mail.</div>
+        <div class="tap-text">Tap to open</div>
+    </div>
+
+    <div class="note-content" id="noteContent">
+        <div id="ransomNote" class="ransom-note"></div>
+    </div>
+
+    <div class="footer">
+        <p>Made with ❤️</p>
+    </div>
+
+    <script src="note.js"></script>
+</body>
+</html>

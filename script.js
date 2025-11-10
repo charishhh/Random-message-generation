@@ -155,18 +155,41 @@ textInput.addEventListener('input', (e) => {
     updateUrl();
 });
 
-// Share URL functionality
+// Share URL functionality - encode message in base64
 function updateUrl() {
-    const params = new URLSearchParams({
-        text: textInput.value
-    });
-    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    if (shareUrl) {
-        shareUrl.value = url;
+    const message = textInput.value;
+    if (!message.trim()) {
+        if (shareUrl) {
+            shareUrl.value = '';
+        }
+        return;
+    }
+    
+    // Encode message in base64
+    try {
+        const encodedMessage = btoa(unescape(encodeURIComponent(message)));
+        
+        // Create URL with note.html and encoded message
+        let basePath = window.location.pathname;
+        // Remove index.html if present, or just use current directory
+        basePath = basePath.replace(/index\.html$/, '').replace(/\/$/, '');
+        if (!basePath.endsWith('/') && basePath !== '') {
+            basePath += '/';
+        }
+        const url = `${window.location.origin}${basePath}note.html?m=${encodedMessage}`;
+        if (shareUrl) {
+            shareUrl.value = url;
+        }
+    } catch (e) {
+        console.error('Error encoding message:', e);
+        if (shareUrl) {
+            shareUrl.value = 'Error encoding message';
+        }
     }
 }
 
 function loadFromUrl() {
+    // Check if we're on the main page and have a text parameter (legacy support)
     const params = new URLSearchParams(window.location.search);
     const text = params.get('text');
     if (text) {
