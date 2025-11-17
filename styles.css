@@ -292,6 +292,31 @@ main {
     border: 2px solid #000;
 }
 
+/* Footer */
+.footer {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+}
+
+.footer p {
+    margin: 0;
+}
+
+.footer a {
+    color: #fff;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: #d3d3d3;
+}
+
 /* Font classes for variety */
 .font-anton { font-family: 'Anton', sans-serif; }
 .font-bebas { font-family: 'Bebas Neue', cursive; }
