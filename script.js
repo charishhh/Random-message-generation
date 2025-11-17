@@ -280,9 +280,8 @@ function displayImagePreview(dataUrl) {
     imagePreview.appendChild(downloadLink);
     
     // Create a shareable note link (base64 encoded message) so others can open the note page
-    // You can change SHARE_HOST to the public host you want the link to use.
-    const SHARE_HOST = 'https://ransom-note.vercel.app'; // desired visible host
-    const FALLBACK_HOST = 'https://randommessage-generation.vercel.app'; // where app is actually hosted
+    // The link format mimics: https://ransom-note.vercel.app/note?m=dXJs
+    const SHARE_HOST = 'https://randommessage-generation.vercel.app'; // your deployed host
 
     if (shareUrl) {
         try {
@@ -290,8 +289,8 @@ function displayImagePreview(dataUrl) {
             const message = textInput.value || '';
             const encodedMessage = btoa(unescape(encodeURIComponent(message)));
 
-            // Prefer SHARE_HOST but fall back to the current origin if needed
-            const hostToUse = SHARE_HOST || FALLBACK_HOST || window.location.origin;
+            // Generate the shareable link using the deployed host
+            const hostToUse = SHARE_HOST || window.location.origin;
             const shareLink = `${hostToUse.replace(/\/$/, '')}/note?m=${encodedMessage}`;
 
             shareUrl.value = shareLink;
