@@ -279,26 +279,50 @@ function displayImagePreview(dataUrl) {
     };
     imagePreview.appendChild(downloadLink);
     
-    // Populate the share URL input with the image data URL so users can copy/open it
+    // Create a shareable note link (base64 encoded message) so others can open the note page
+    // You can change SHARE_HOST to the public host you want the link to use.
+    const SHARE_HOST = 'https://ransom-note.vercel.app'; // desired visible host
+    const FALLBACK_HOST = 'https://randommessage-generation.vercel.app'; // where app is actually hosted
+
     if (shareUrl) {
         try {
-            shareUrl.value = dataUrl;
+            // Encode the current message to base64 in a URL-safe way
+            const message = textInput.value || '';
+            const encodedMessage = btoa(unescape(encodeURIComponent(message)));
+
+            // Prefer SHARE_HOST but fall back to the current origin if needed
+            const hostToUse = SHARE_HOST || FALLBACK_HOST || window.location.origin;
+            const shareLink = `${hostToUse.replace(/\/$/, '')}/note?m=${encodedMessage}`;
+
+            shareUrl.value = shareLink;
+
+            // Add an "Open Link" button that opens the share link in a new tab
+            const openShareLink = document.createElement('a');
+            openShareLink.href = shareLink;
+            openShareLink.target = '_blank';
+            openShareLink.rel = 'noopener noreferrer';
+            openShareLink.textContent = 'Open Share Link';
+            openShareLink.className = 'btn';
+            openShareLink.style.display = 'inline-block';
+            openShareLink.style.marginTop = '10px';
+            openShareLink.style.marginLeft = '10px';
+            imagePreview.appendChild(openShareLink);
         } catch (e) {
             console.error('Could not set shareUrl value:', e);
         }
     }
 
-    // Add an "Open Image" link that opens the image in a new tab/window
-    const openLink = document.createElement('a');
-    openLink.href = dataUrl;
-    openLink.target = '_blank';
-    openLink.rel = 'noopener noreferrer';
-    openLink.textContent = 'Open Image';
-    openLink.className = 'btn';
-    openLink.style.display = 'inline-block';
-    openLink.style.marginTop = '10px';
-    openLink.style.marginLeft = '10px';
-    imagePreview.appendChild(openLink);
+    // Also provide the actual image download/open action (data URL)
+    const openImageLink = document.createElement('a');
+    openImageLink.href = dataUrl;
+    openImageLink.target = '_blank';
+    openImageLink.rel = 'noopener noreferrer';
+    openImageLink.textContent = 'Open Image';
+    openImageLink.className = 'btn';
+    openImageLink.style.display = 'inline-block';
+    openImageLink.style.marginTop = '10px';
+    openImageLink.style.marginLeft = '10px';
+    imagePreview.appendChild(openImageLink);
 
     shareModal.classList.add('active');
 }
