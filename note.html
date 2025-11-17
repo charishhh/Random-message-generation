@@ -4,184 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>You've got mail</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat&family=Courier+Prime&family=Creepster&family=Fjalla+One&family=Impact&family=Lobster&family=Oswald:wght@400;700&family=Passion+One&family=Permanent+Marker&family=Playfair+Display:wght@700&family=Righteous&family=Roboto+Condensed:wght@700&family=Rubik+Beastly&family=Special+Elite&family=Staatliches&family=Ultra&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background: #f5f5f5;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 40px 20px;
-            font-family: 'Courier Prime', monospace;
+            padding: 20px;
+            font-family: 'Courier Prime', 'Special Elite', monospace;
+        }
+
+        .mail-banner {
+            background: #000;
+            color: #fff;
+            padding: 20px 40px;
+            margin-bottom: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Special Elite', 'Courier Prime', monospace;
         }
 
         .envelope-container {
-            text-align: center;
+            position: relative;
             cursor: pointer;
-            perspective: 1000px;
-            transition: all 0.5s ease;
-            margin-bottom: 40px;
-        }
-
-        .envelope-container.opened {
-            margin-bottom: 20px;
-            opacity: 0.7;
-            transform: scale(0.9);
-            pointer-events: none;
+            margin-bottom: 60px;
         }
 
         .envelope {
-            width: 320px;
-            height: 220px;
+            width: 400px;
+            height: 280px;
             position: relative;
-            margin: 0 auto 40px;
-            transition: transform 0.3s ease;
-            cursor: pointer;
+            margin: 0 auto;
+            max-width: 90vw;
         }
 
-        .envelope-container:hover .envelope:not(.opened) {
-            transform: translateY(-5px) scale(1.02);
-        }
-
-        .envelope-back {
+        .envelope-body {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #e8d5a3 0%, #d4af37 100%);
-            position: relative;
-            border-radius: 8px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            height: 65%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border: 1.5px solid #aaa;
+            border-top: none;
+            border-radius: 0 0 3px 3px;
+            background: transparent;
+            z-index: 1;
+            box-sizing: border-box;
         }
 
         .envelope-flap {
             width: 100%;
-            height: 55%;
-            background: linear-gradient(135deg, #c9a227 0%, #b8941f 100%);
+            height: 50%;
             position: absolute;
             top: 0;
             left: 0;
-            transform-origin: top center;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border-radius: 8px 8px 0 0;
-            z-index: 2;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%);
+            background: rgba(245, 245, 245, 0.98);
+            clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.4s ease;
+            transform-origin: center top;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .envelope-flap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1.5px solid #aaa;
+            border-bottom: none;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);
+            box-sizing: border-box;
         }
 
         .envelope-container.opened .envelope-flap {
             transform: rotateX(-160deg);
+            opacity: 0.2;
         }
 
-        .envelope-front {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #e8d5a3 0%, #d4af37 100%);
+        .tap-button {
             position: absolute;
-            top: 0;
-            left: 0;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-
-        .envelope-seal {
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle, #c41e3a 0%, #8b0000 100%);
-            border-radius: 50%;
-            position: absolute;
-            top: 45%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            z-index: 3;
-            transition: all 0.4s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 3px solid rgba(255,255,255,0.3);
-        }
-
-        .envelope-container.opened .envelope-seal {
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(0.5);
-        }
-
-        .envelope-container:active .envelope-seal {
-            transform: translate(-50%, -50%) scale(0.95);
-        }
-
-        .mail-text {
-            font-size: 28px;
-            font-weight: bold;
-            color: #2c2c2c;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-family: 'Special Elite', 'Courier Prime', monospace;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .tap-text {
-            font-size: 16px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            background: #555;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
             font-family: 'Courier Prime', monospace;
-            transition: color 0.3s ease;
+            cursor: pointer;
+            z-index: 5;
+            transition: all 0.3s ease;
+            border: none;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .envelope-container:hover .tap-text {
-            color: #333;
+        .tap-button:hover {
+            background: #5a5a5a;
+            transform: translate(-50%, -50%) scale(1.05);
         }
 
-        .envelope-container.opened .mail-text,
-        .envelope-container.opened .tap-text {
+        .envelope-container.opened .tap-button {
             opacity: 0;
-            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
-        .note-content {
-            display: none;
-            max-width: 900px;
-            margin: 60px auto 40px;
-            padding: 50px;
+        .envelope-letter {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 65%;
             background: #fff;
-            border-radius: 0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            border: 2px solid #eee;
+            border-radius: 2px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.6s ease 0.4s;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 100%;
         }
 
-        .envelope-container.opened ~ .note-content {
-            display: block;
-            animation: fadeInUp 0.8s ease;
+        .envelope-container.opened .envelope-letter {
+            opacity: 1;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .envelope-letter::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .envelope-letter::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .envelope-letter::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            font-family: 'Courier Prime', monospace;
         }
 
         .ransom-note {
             display: flex;
             flex-wrap: wrap;
-            gap: 3px;
+            gap: 2px;
             align-items: baseline;
-            line-height: 2;
+            line-height: 1.6;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
@@ -269,28 +268,37 @@
         .font-staatliches { font-family: 'Staatliches', cursive; }
         .font-ultra { font-family: 'Ultra', serif; }
 
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #999;
-            font-size: 12px;
+        @media (max-width: 600px) {
+            .envelope {
+                width: 90vw;
+                height: 230px;
+            }
+
+            .mail-banner {
+                font-size: 18px;
+                padding: 15px 20px;
+                margin-bottom: 40px;
+            }
+
+            .tap-button {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="mail-banner">You've got mail.</div>
+    
     <div class="envelope-container" id="envelopeContainer">
         <div class="envelope">
-            <div class="envelope-back"></div>
-            <div class="envelope-front"></div>
+            <div class="envelope-body"></div>
             <div class="envelope-flap"></div>
-            <div class="envelope-seal">✉</div>
+            <button class="tap-button" id="tapButton">Tap to open</button>
+            <div class="envelope-letter" id="envelopeLetter">
+                <div id="ransomNote" class="ransom-note"></div>
+            </div>
         </div>
-        <div class="mail-text">You've got mail.</div>
-        <div class="tap-text">Tap to open</div>
-    </div>
-
-    <div class="note-content" id="noteContent">
-        <div id="ransomNote" class="ransom-note"></div>
     </div>
 
     <div class="footer">
