@@ -279,6 +279,27 @@ function displayImagePreview(dataUrl) {
     };
     imagePreview.appendChild(downloadLink);
     
+    // Populate the share URL input with the image data URL so users can copy/open it
+    if (shareUrl) {
+        try {
+            shareUrl.value = dataUrl;
+        } catch (e) {
+            console.error('Could not set shareUrl value:', e);
+        }
+    }
+
+    // Add an "Open Image" link that opens the image in a new tab/window
+    const openLink = document.createElement('a');
+    openLink.href = dataUrl;
+    openLink.target = '_blank';
+    openLink.rel = 'noopener noreferrer';
+    openLink.textContent = 'Open Image';
+    openLink.className = 'btn';
+    openLink.style.display = 'inline-block';
+    openLink.style.marginTop = '10px';
+    openLink.style.marginLeft = '10px';
+    imagePreview.appendChild(openLink);
+
     shareModal.classList.add('active');
 }
 
