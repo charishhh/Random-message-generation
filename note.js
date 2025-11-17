@@ -21,16 +21,16 @@ const colors = [
 ];
 
 let settings = {
-    fontSize: 50,
+    fontSize: 28,
     letterSpacing: 1,
-    rotationRange: 12,
+    rotationRange: 8,
     colorMode: 'mixed'
 };
 
 // DOM elements
 const envelopeContainer = document.getElementById('envelopeContainer');
-const noteContent = document.getElementById('noteContent');
 const ransomNote = document.getElementById('ransomNote');
+const tapButton = document.getElementById('tapButton');
 
 // Decode message from URL
 function getMessageFromUrl() {
@@ -42,8 +42,8 @@ function getMessageFromUrl() {
     }
     
     try {
-        // Decode base64
-        const decoded = atob(encodedMessage);
+        // Decode base64 and handle UTF-8 encoding properly
+        const decoded = decodeURIComponent(escape(atob(encodedMessage)));
         return decoded;
     } catch (e) {
         console.error('Error decoding message:', e);
@@ -146,17 +146,21 @@ function generateRansomNote(text) {
 }
 
 // Open envelope
-envelopeContainer.addEventListener('click', () => {
+function openEnvelope() {
     if (envelopeContainer.classList.contains('opened')) {
         return; // Already opened
     }
     
     envelopeContainer.classList.add('opened');
-    
-    // Scroll to note after envelope animation
-    setTimeout(() => {
-        noteContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 700);
+}
+
+// Open on container click
+envelopeContainer.addEventListener('click', openEnvelope);
+
+// Open on button click
+tapButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openEnvelope();
 });
 
 // Initialize
